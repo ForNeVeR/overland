@@ -1,0 +1,40 @@
+<html><head><title>Socko Web Socket Example</title></head>
+<body>
+<script type="text/javascript">
+var socket;
+if (!window.WebSocket) {
+window.WebSocket = window.MozWebSocket;
+}
+if (window.WebSocket) {
+socket = new WebSocket("ws://localhost:8888/websocket/");
+socket.onmessage = function(event) { alert(event.data); };
+socket.onopen = function(event) { alert("Web Socket opened!"); };
+socket.onclose = function(event) { alert("Web Socket closed"); };
+} else {
+alert("Your browser does not support Web Sockets.");
+}
+
+    function send(message) {
+    if (!window.WebSocket) { return; }
+    if (socket.readyState == WebSocket.OPEN) {
+    socket.send(message);
+    } else {
+    alert("The socket is not open.");
+    }
+    }
+
+function doLogin() {
+    var login = document.getElementsByName('login')[0].value;
+    var password = document.getElementsByName('password')[0].value;
+    send('connect:' + login + ':' + password);
+}
+</script>
+
+<form>
+    <input name="login"/>
+    <input name="password"/>
+    <button type="button" onclick="doLogin()"/>
+</form>
+
+</body>
+</html>
