@@ -10,7 +10,10 @@
             if (window.WebSocket) {
                 socket = new WebSocket("ws://localhost:8888/websocket/");
                 socket.onmessage = function(event) {
-                    alert(event.data);
+                    var message = event.data;
+                    var div = document.createElement('div');
+                    span.innerHTML = message; // TODO: prevent HTML injections
+                    document.getElementById('messages').appendChild(div);
                 };
                 socket.onopen = function(event) {
                     alert("Web Socket opened!");
@@ -44,6 +47,17 @@
 
                 send(info);
             }
+
+            function doSend() {
+                var to = document.getElementById('to').value;
+                var text = document.getElementById('message').value;
+                var info = {
+                    to: to,
+                    text: text
+                };
+
+                send(info);
+            }
         </script>
     </head>
     <body>
@@ -52,5 +66,11 @@
             password: <input id="password" type="password"/><br/>
             <button type="button" onclick="doLogin()">Login</button>
         </form>
+        <form action="#">
+            to: <input id="to"/><br/>
+            message: <input id="message"/>
+            <button type="button" onclick="doSend()">Send message</button>
+        </form>
+        <div id="messages"/>
     </body>
 </html>
