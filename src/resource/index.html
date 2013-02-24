@@ -12,7 +12,7 @@
                 socket.onmessage = function(event) {
                     var message = event.data;
                     var div = document.createElement('div');
-                    span.innerHTML = message; // TODO: prevent HTML injections
+                    div.innerHTML = message; // TODO: prevent HTML injections
                     document.getElementById('messages').appendChild(div);
                 };
                 socket.onopen = function(event) {
