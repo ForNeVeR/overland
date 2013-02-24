@@ -15,3 +15,5 @@ libraryDependencies += "org.igniterealtime.smack" % "smack" % "3.2.1"
 libraryDependencies += "org.igniterealtime.smack" % "smackx" % "3.2.1"
 
 libraryDependencies += "org.mashupbots.socko" %% "socko-webserver" % "0.2.4"
+
+libraryDependencies += "com.google.code.gson" % "gson" % "2.2.2"

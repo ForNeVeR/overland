@@ -1,40 +1,56 @@
-<html><head><title>Socko Web Socket Example</title></head>
-<body>
-<script type="text/javascript">
-var socket;
-if (!window.WebSocket) {
-window.WebSocket = window.MozWebSocket;
-}
-if (window.WebSocket) {
-socket = new WebSocket("ws://localhost:8888/websocket/");
-socket.onmessage = function(event) { alert(event.data); };
-socket.onopen = function(event) { alert("Web Socket opened!"); };
-socket.onclose = function(event) { alert("Web Socket closed"); };
-} else {
-alert("Your browser does not support Web Sockets.");
-}
+<html>
+    <head>
+        <title>Overland XMPP client</title>
+        <script type="text/javascript">
+            var socket;
+            if (!window.WebSocket) {
+                window.WebSocket = window.MozWebSocket;
+            }
 
-    function send(message) {
-    if (!window.WebSocket) { return; }
-    if (socket.readyState == WebSocket.OPEN) {
-    socket.send(message);
-    } else {
-    alert("The socket is not open.");
-    }
-    }
+            if (window.WebSocket) {
+                socket = new WebSocket("ws://localhost:8888/websocket/");
+                socket.onmessage = function(event) {
+                    alert(event.data);
+                };
+                socket.onopen = function(event) {
+                    alert("Web Socket opened!");
+                };
+                socket.onclose = function(event) {
+                    alert("Web Socket closed");
+                };
+            } else {
+                alert("Your browser does not support Web Sockets.");
+            }
 
-function doLogin() {
-    var login = document.getElementsByName('login')[0].value;
-    var password = document.getElementsByName('password')[0].value;
-    send('connect:' + login + ':' + password);
-}
-</script>
+            function send(object) {
+                if (!window.WebSocket) {
+                    return;
+                }
 
-<form>
-    <input name="login"/>
-    <input name="password"/>
-    <button type="button" onclick="doLogin()"/>
-</form>
+                if (socket.readyState == WebSocket.OPEN) {
+                    socket.send(JSON.stringify(object));
+                } else {
+                    alert("The socket is not open.");
+                }
+            }
 
-</body>
+            function doLogin() {
+                var login = document.getElementById('login').value;
+                var password = document.getElementById('password').value;
+                var info = {
+                    login: login,
+                    password: password
+                };
+
+                send(info);
+            }
+        </script>
+    </head>
+    <body>
+        <form action="#">
+            login: <input id="login"/><br/>
+            password: <input id="password" type="password"/><br/>
+            <button type="button" onclick="doLogin()">Login</button>
+        </form>
+    </body>
 </html>
