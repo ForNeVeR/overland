@@ -3,15 +3,10 @@ package ru.org.codingteam.overland.websocket
 import akka.actor.{Actor, ActorLogging}
 import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.jboss.netty.channel.Channel
-import scala.concurrent.duration._
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
-import akka.util.Timeout
 import org.jivesoftware.smack.XMPPConnection
 
-case object Stop
-
 class WebSocketProcessor extends Actor with ActorLogging {
-  import context.dispatcher
 
   var channel: Channel = null
   var connected: Boolean = false

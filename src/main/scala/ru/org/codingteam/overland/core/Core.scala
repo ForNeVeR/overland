@@ -1,9 +1,8 @@
 package ru.org.codingteam.overland.core
 
-import akka.actor.{Props, ActorRef, ActorLogging, Actor}
-import org.mashupbots.socko.handlers.WebSocketBroadcaster
-import org.mashupbots.socko.events.WebSocketFrameEvent
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import org.jboss.netty.channel.Channel
+import org.mashupbots.socko.events.WebSocketFrameEvent
 import ru.org.codingteam.overland.websocket.WebSocketProcessor
 
 case class WebSocketMessage(event: WebSocketFrameEvent)
