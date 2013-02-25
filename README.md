@@ -1,7 +1,7 @@
 Overland
 ==========
 
-overland will be the web XMPP client. Nothing wirks yet.
+overland will be the web XMPP client. Nothing works yet.
 
 ## License
 
