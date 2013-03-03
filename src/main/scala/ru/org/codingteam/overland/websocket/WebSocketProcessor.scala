@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import java.lang.Throwable
 import org.jivesoftware.smack.packet.Message
 
-case class ConnectInfo(login: String, password: String)
+case class ConnectInfo(server: String, login: String, password: String)
 case class MessageInfo(to: String, text: String)
 
 case class ChatMessage(from: String, text: String)
@@ -30,10 +30,9 @@ class WebSocketProcessor extends Actor with ActorLogging {
     case event: WebSocketFrameEvent if !connected =>
       val info = gson.fromJson(event.readText, classOf[ConnectInfo])
       channel = event.channel
-      val server = "jabber.ru"
 
       try {
-        connect(server, info.login, info.password)
+        connect(info.server, info.login, info.password)
         send("Login succeed")
       } catch {
         case error: Throwable =>
@@ -96,6 +95,9 @@ class WebSocketProcessor extends Actor with ActorLogging {
     log.info(s"Sending: $text")
     if (channel != null && channel.isWritable) {
       channel.write(new TextWebSocketFrame(text))
+    } else {
+      log.info(s"Detected that client offline. Terminating...")
+      context.stop(self)
     }
   }
 
