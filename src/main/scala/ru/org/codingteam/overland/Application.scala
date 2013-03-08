@@ -6,6 +6,7 @@ import core.{WebSocketMessage, Core}
 import org.mashupbots.socko.routes.{Path, Routes, WebSocketFrame, WebSocketHandshake}
 import org.mashupbots.socko.webserver.{WebServer, WebServerConfig}
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object Application extends App {
   implicit val timeout = Timeout(60 seconds)
