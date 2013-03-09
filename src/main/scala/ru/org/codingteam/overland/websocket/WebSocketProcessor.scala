@@ -25,6 +25,7 @@ class WebSocketProcessor extends Actor with ActorLogging {
   var channel: Channel = null
   var connected: Boolean = false
   var connection: XMPPConnection = null
+  var chats = Map[String, Chat]()
 
   override def receive = {
     case event: WebSocketFrameEvent if !connected =>
@@ -111,7 +112,18 @@ class WebSocketProcessor extends Actor with ActorLogging {
   }
 
   def getChat(jid: String) = {
-    // TODO: remember created chats
+    val maybeChat = chats.get(jid)
+    maybeChat match {
+      case Some(chat) => chat
+      case None => {
+        val chat = createChat(jid)
+        chats = chats.updated(jid, chat)
+        chat
+      }
+    }
+  }
+
+  def createChat(jid: String) = {
     connection.getChatManager.createChat(jid, new MessageListener {
       def processMessage(chat: Chat, message: Message) {
         self ! ChatMessage(chat.getParticipant, message.getBody)
