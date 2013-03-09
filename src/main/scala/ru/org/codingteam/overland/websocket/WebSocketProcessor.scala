@@ -5,6 +5,7 @@ import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.jboss.netty.channel.Channel
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.jivesoftware.smack.{Chat, ConnectionConfiguration, ConnectionListener, MessageListener, XMPPConnection}
+import org.jivesoftware.smackx.muc.MultiUserChat
 import com.google.gson.Gson
 import java.lang.Throwable
 import org.jivesoftware.smack.packet.Message
@@ -25,7 +26,9 @@ class WebSocketProcessor extends Actor with ActorLogging {
   var channel: Channel = null
   var connected: Boolean = false
   var connection: XMPPConnection = null
+
   var chats = Map[String, Chat]()
+  var rooms = Map[String, MultiUserChat]()
 
   override def receive = {
     case event: WebSocketFrameEvent if !connected =>
@@ -123,11 +126,33 @@ class WebSocketProcessor extends Actor with ActorLogging {
     }
   }
 
+  def getRoom(jid: String) = {
+    val maybeRoom = rooms.get(jid)
+    maybeRoom match {
+      case Some(room) => room
+      case None => {
+        val room = createRoom(jid)
+        rooms = rooms.updated(jid, room)
+        room
+      }
+    }
+  }
+
   def createChat(jid: String) = {
     connection.getChatManager.createChat(jid, new MessageListener {
       def processMessage(chat: Chat, message: Message) {
-        self ! ChatMessage(chat.getParticipant, message.getBody)
+        val body = message.getBody
+        if (body != null) {
+          self ! ChatMessage(chat.getParticipant, message.getBody)
+        }
       }
     })
+  }
+
+  def createRoom(jid: String) = {
+    val muc = new MultiUserChat(connection, jid)
+    // TODO: Register participant processor.
+    // TODO: Register message processor.
+    muc
   }
 }
