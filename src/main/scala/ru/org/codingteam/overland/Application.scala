@@ -26,7 +26,7 @@ object Application extends App {
     }
   })
 
-  val webServer = new WebServer(WebServerConfig(), routes, system)
+  val webServer = new WebServer(WebServerConfig(port = 9000), routes, system)
   Runtime.getRuntime.addShutdownHook(new Thread {
     override def run { webServer.stop() }
   })

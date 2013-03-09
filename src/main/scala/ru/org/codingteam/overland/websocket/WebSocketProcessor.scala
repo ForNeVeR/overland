@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging}
 import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.jboss.netty.channel.Channel
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
-import org.jivesoftware.smack.{ConnectionListener, Chat, MessageListener, XMPPConnection}
+import org.jivesoftware.smack.{Chat, ConnectionConfiguration, ConnectionListener, MessageListener, XMPPConnection}
 import com.google.gson.Gson
 import java.lang.Throwable
 import org.jivesoftware.smack.packet.Message
@@ -84,7 +84,11 @@ class WebSocketProcessor extends Actor with ActorLogging {
   }
 
   def connect(server: String, login: String, password: String) {
-    connection = new XMPPConnection(server)
+    val port = 5222 // default XMPP port
+    val configuration = new ConnectionConfiguration(server, port)
+    configuration.setReconnectionAllowed(false)
+
+    connection = new XMPPConnection(configuration)
     connection.connect()
     connection.addConnectionListener(connectionListener)
     connection.login(login, password)
