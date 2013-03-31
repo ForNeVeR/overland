@@ -10,7 +10,7 @@
                 }
 
                 if (window.WebSocket) {
-                    socket = new WebSocket("ws://localhost:8888/websocket/");
+                    socket = new WebSocket("ws://localhost:9000/websocket/");
                     socket.onmessage = function(event) {
                         var message = event.data;
                         logText(message);
