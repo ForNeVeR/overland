@@ -3,26 +3,33 @@
         <title>Overland XMPP client</title>
         <script type="text/javascript">
             var socket;
-            if (!window.WebSocket) {
-                window.WebSocket = window.MozWebSocket;
+
+            function serve() {
+                if (!window.WebSocket) {
+                    window.WebSocket = window.MozWebSocket;
+                }
+
+                if (window.WebSocket) {
+                    socket = new WebSocket("ws://localhost:8888/websocket/");
+                    socket.onmessage = function(event) {
+                        var message = event.data;
+                        logText(message);
+                    };
+                    socket.onopen = function(event) {
+                        logText("Web Socket opened!");
+                    };
+                    socket.onclose = function(event) {
+                        logText("Web Socket closed");
+                    };
+                } else {
+                    alert("Your browser does not support Web Sockets.");
+                }
             }
 
-            if (window.WebSocket) {
-                socket = new WebSocket("ws://localhost:9000/websocket/");
-                socket.onmessage = function(event) {
-                    var message = event.data;
-                    var div = document.createElement('div');
-                    div.innerHTML = message; // TODO: prevent HTML injections
-                    document.getElementById('messages').appendChild(div);
-                };
-                socket.onopen = function(event) {
-                    alert("Web Socket opened!");
-                };
-                socket.onclose = function(event) {
-                    alert("Web Socket closed");
-                };
-            } else {
-                alert("Your browser does not support Web Sockets.");
+            function logText(message) {
+                var div = document.createElement('div');
+                div.innerHTML = message; // TODO: prevent HTML injections
+                document.getElementById('messages').appendChild(div);
             }
 
             function send(object) {
@@ -62,7 +69,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="serve()">
         <form action="#">
             login: <input id="login"/><br/>
             password: <input id="password" type="password"/><br/>
