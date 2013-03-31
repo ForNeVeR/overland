@@ -117,7 +117,7 @@ class WebSocketProcessor extends Actor with ActorLogging {
   }
 
   def createChat(jid: String) = {
-    connection.getChatManager.createChat(jid,new XMPPMessageListener(self))
+    connection.getChatManager.createChat(jid, new XMPPMessageListener(self))
   }
 
   def createRoom(jid: String) = {
