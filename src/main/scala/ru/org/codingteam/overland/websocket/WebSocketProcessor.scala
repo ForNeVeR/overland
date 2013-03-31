@@ -1,20 +1,14 @@
 package ru.org.codingteam.overland.websocket
 
 import akka.actor.{Actor, ActorLogging}
-import org.mashupbots.socko.events.WebSocketFrameEvent
-import org.jboss.netty.channel.Channel
-import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
-import org.jivesoftware.smack.{Chat, ConnectionConfiguration, ConnectionListener, MessageListener, XMPPConnection}
-import org.jivesoftware.smackx.muc.MultiUserChat
 import com.google.gson.Gson
 import java.lang.Throwable
-import org.jivesoftware.smack.packet.Message
-
-case class ConnectInfo(server: String, login: String, password: String)
-case class MessageInfo(to: String, text: String)
-
-case class ChatMessage(from: String, text: String)
-case class CriticalError(message: String, error: Throwable)
+import org.jboss.netty.channel.Channel
+import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
+import org.jivesoftware.smack.{Chat, ConnectionConfiguration, XMPPConnection}
+import org.jivesoftware.smackx.muc.MultiUserChat
+import org.mashupbots.socko.events.WebSocketFrameEvent
+import ru.org.codingteam.overland.xmpp.{XMPPConnectionListener, XMPPMessageListener}
 
 object WebSocketProcessor {
   lazy val gson = new Gson()
@@ -69,23 +63,7 @@ class WebSocketProcessor extends Actor with ActorLogging {
     }
   }
 
-  def connectionListener = new ConnectionListener {
-    def reconnectionFailed(e: Exception) {
-      self ! CriticalError("Reconnection failed", e)
-    }
-
-    def reconnectionSuccessful() {}
-
-    def connectionClosedOnError(e: Exception) {
-      self ! CriticalError("Connection closed on error", e)
-    }
-
-    def connectionClosed() {
-      self ! CriticalError("Connection closed", null)
-    }
-
-    def reconnectingIn(seconds: Int) {}
-  }
+  def connectionListener = new XMPPConnectionListener(self)
 
   def connect(server: String, login: String, password: String) {
     val port = 5222 // default XMPP port
@@ -139,14 +117,7 @@ class WebSocketProcessor extends Actor with ActorLogging {
   }
 
   def createChat(jid: String) = {
-    connection.getChatManager.createChat(jid, new MessageListener {
-      def processMessage(chat: Chat, message: Message) {
-        val body = message.getBody
-        if (body != null) {
-          self ! ChatMessage(chat.getParticipant, message.getBody)
-        }
-      }
-    })
+    connection.getChatManager.createChat(jid,new XMPPMessageListener(self))
   }
 
   def createRoom(jid: String) = {
