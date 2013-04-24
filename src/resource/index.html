@@ -45,13 +45,11 @@
             }
 
             function doLogin() {
-                var server = 'jabber.ru'
-                var login = document.getElementById('login').value;
+                var jid = document.getElementById('jid').value;
                 var password = document.getElementById('password').value;
                 var info = {
-                    server: server,
-                    login: login,
-                    password: password
+                     jid : jid,
+		     password: password
                 };
 
                 send(info);
@@ -71,7 +69,7 @@
     </head>
     <body onload="serve()">
         <form action="#">
-            login: <input id="login"/><br/>
+            JID: <input id="jid"/><br/>
             password: <input id="password" type="password"/><br/>
             <button type="button" onclick="doLogin()">Login</button>
         </form>

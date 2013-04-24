@@ -7,6 +7,7 @@ import org.jboss.netty.channel.Channel
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.jivesoftware.smack.{Chat, ConnectionConfiguration, XMPPConnection}
 import org.jivesoftware.smackx.muc.MultiUserChat
+import org.jivesoftware.smack.util.StringUtils
 import org.mashupbots.socko.events.WebSocketFrameEvent
 import ru.org.codingteam.overland.xmpp.{XMPPConnectionListener, XMPPMessageListener}
 
@@ -30,7 +31,7 @@ class WebSocketProcessor extends Actor with ActorLogging {
       channel = event.channel
 
       try {
-        connect(info.server, info.login, info.password)
+        connect(info.jid, info.password)
         send("Login succeed")
       } catch {
         case error: Throwable =>
@@ -65,9 +66,11 @@ class WebSocketProcessor extends Actor with ActorLogging {
 
   def connectionListener = new XMPPConnectionListener(self)
 
-  def connect(server: String, login: String, password: String) {
-    val port = 5222 // default XMPP port
-    val configuration = new ConnectionConfiguration(server, port)
+  def connect(jid: String, password: String) {
+    val server = StringUtils.parseServer(jid)
+    val login = StringUtils.parseName(jid)
+
+    val configuration = new ConnectionConfiguration(server)
     configuration.setReconnectionAllowed(false)
 
     connection = new XMPPConnection(configuration)
