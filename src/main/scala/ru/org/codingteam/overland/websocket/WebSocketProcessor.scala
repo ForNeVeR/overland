@@ -8,7 +8,7 @@ import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.jivesoftware.smack.{Chat, ConnectionConfiguration, XMPPConnection}
 import org.jivesoftware.smackx.muc.MultiUserChat
 import org.mashupbots.socko.events.WebSocketFrameEvent
-import ru.org.codingteam.overland.xmpp.{XMPPConnectionListener, XMPPMessageListener}
+import ru.org.codingteam.overland.xmpp.{XMPPConnectionListener, XMPPMessageListener, XMPPChatManagerListener}
 
 object WebSocketProcessor {
   lazy val gson = new Gson()
@@ -73,7 +73,8 @@ class WebSocketProcessor extends Actor with ActorLogging {
     connection = new XMPPConnection(configuration)
     connection.connect()
     connection.addConnectionListener(connectionListener)
-    connection.login(login, password)
+    connection.getChatManager.addChatListener(new XMPPChatManagerListener(self))
+    connection.login(login, password, "overland")
     connected = true
   }
 
