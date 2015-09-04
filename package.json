@@ -1,0 +1,24 @@
+{
+  "name": "overland",
+  "version": "0.0.1",
+  "description": "Web XMPP client.",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ForNeVeR/overland.git"
+  },
+  "keywords": [
+    "xmpp"
+  ],
+  "author": "Friedrich von Never",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ForNeVeR/overland/issues"
+  },
+  "homepage": "https://github.com/ForNeVeR/overland#readme",
+  "devDependencies": {
+    "stanza.io": "^7.3.2"
+  }
+}
